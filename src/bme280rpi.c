@@ -3,6 +3,7 @@ Modified BSD License
 ====================
 
 Copyright © 2016, Andrei Vainik
+Copyright © 2020, Wade Ryan
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,9 +30,11 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 This piece of code was combined from several sources
+https://github.com/andreiva/raspberry-pi-bme280
 https://github.com/adafruit/Adafruit_BME280_Library
 https://cdn-shop.adafruit.com/datasheets/BST-BME280_DS001-10.pdf
 https://projects.drogon.net/raspberry-pi/wiringpi/i2c-library/
+
 
 Compensation functions and altitude function originally from:
 https://github.com/adafruit/Adafruit_BME280_Library/blob/master/Adafruit_BME280.cpp
@@ -49,45 +52,16 @@ https://github.com/adafruit/Adafruit_BME280_Library/blob/master/Adafruit_BME280.
  ***************************************************************************
 ****************************************************************************/
 
-#include <stdio.h>
-#include <errno.h>
-#include <stdint.h>
-#include <time.h>
-#include <math.h>
-#include <wiringPiI2C.h>
-#include "bme280.h"
+#include "bme280rpi.h"
 
-int main() {
-
-  int fd = wiringPiI2CSetup(BME280_ADDRESS);
-  if(fd < 0) {
-    printf("Device not found");
-    return -1;
-  }
-
-  bme280_calib_data cal;
-  readCalibrationData(fd, &cal);
+void bme280_standardSetup(int fd, bme280_calib_data *calibrationData) {
+  bme280_readCalibrationData(fd, calibrationData);
 
   wiringPiI2CWriteReg8(fd, 0xf2, 0x01);   // humidity oversampling x 1
   wiringPiI2CWriteReg8(fd, 0xf4, 0x25);   // pressure and temperature oversampling x 1, mode normal
-
-  bme280_raw_data raw;
-  getRawData(fd, &raw);
-
-  int32_t t_fine = getTemperatureCalibration(&cal, raw.temperature);
-  float t = compensateTemperature(t_fine); // C
-  float p = compensatePressure(raw.pressure, &cal, t_fine) / 100; // hPa
-  float h = compensateHumidity(raw.humidity, &cal, t_fine);       // %
-  float a = getAltitude(p);                         // meters
-
-  printf("{\"sensor\":\"bme280\", \"humidity\":%.2f, \"pressure\":%.2f,"
-    " \"celsius\":%.2f, \"fahrenheit \":%.2f, \"altitude\":%.2f, \"timestamp\":%d}\n",
-    h, p, t, t*9/5 +32, a, (int)time(NULL));
-
-  return 0;
 }
 
-int32_t getTemperatureCalibration(bme280_calib_data *cal, int32_t adc_T) {
+int32_t bme280_getTemperatureCalibration(bme280_calib_data *cal, int32_t adc_T) {
   int32_t var1  = ((((adc_T>>3) - ((int32_t)cal->dig_T1 <<1))) *
      ((int32_t)cal->dig_T2)) >> 11;
 
@@ -98,7 +72,7 @@ int32_t getTemperatureCalibration(bme280_calib_data *cal, int32_t adc_T) {
   return var1 + var2;
 }
 
-void readCalibrationData(int fd, bme280_calib_data *data) {
+void bme280_readCalibrationData(int fd, bme280_calib_data *data) {
   data->dig_T1 = (uint16_t)wiringPiI2CReadReg16(fd, BME280_REGISTER_DIG_T1);
   data->dig_T2 = (int16_t)wiringPiI2CReadReg16(fd, BME280_REGISTER_DIG_T2);
   data->dig_T3 = (int16_t)wiringPiI2CReadReg16(fd, BME280_REGISTER_DIG_T3);
@@ -121,12 +95,12 @@ void readCalibrationData(int fd, bme280_calib_data *data) {
   data->dig_H6 = (int8_t)wiringPiI2CReadReg8(fd, BME280_REGISTER_DIG_H6);
 }
 
-float compensateTemperature(int32_t t_fine) {
+float bme280_compensateTemperature(int32_t t_fine) {
   float T  = (t_fine * 5 + 128) >> 8;
   return T/100;
 }
 
-float compensatePressure(int32_t adc_P, bme280_calib_data *cal, int32_t t_fine) {
+float bme280_compensatePressure(int32_t adc_P, bme280_calib_data *cal, int32_t t_fine) {
   int64_t var1, var2, p;
 
   var1 = ((int64_t)t_fine) - 128000;
@@ -150,7 +124,7 @@ float compensatePressure(int32_t adc_P, bme280_calib_data *cal, int32_t t_fine) 
 }
 
 
-float compensateHumidity(int32_t adc_H, bme280_calib_data *cal, int32_t t_fine) {
+float bme280_compensateHumidity(int32_t adc_H, bme280_calib_data *cal, int32_t t_fine) {
   int32_t v_x1_u32r;
 
   v_x1_u32r = (t_fine - ((int32_t)76800));
@@ -170,7 +144,7 @@ float compensateHumidity(int32_t adc_H, bme280_calib_data *cal, int32_t t_fine) 
   return  h / 1024.0;
 }
 
-void getRawData(int fd, bme280_raw_data *raw) {
+void bme280_getRawData(int fd, bme280_raw_data *raw) {
   wiringPiI2CWrite(fd, 0xf7);
 
   raw->pmsb = wiringPiI2CRead(fd);
@@ -199,7 +173,7 @@ void getRawData(int fd, bme280_raw_data *raw) {
   raw->humidity = (raw->humidity | raw->hlsb);
 }
 
-float getAltitude(float pressure) {
+float bme280_getAltitude(float pressure) {
   // Equation taken from BMP180 datasheet (page 16):
   //  http://www.adafruit.com/datasheets/BST-BMP180-DS000-09.pdf
 

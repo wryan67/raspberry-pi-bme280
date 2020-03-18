@@ -34,10 +34,16 @@ https://cdn-shop.adafruit.com/datasheets/BST-BME280_DS001-10.pdf
 https://projects.drogon.net/raspberry-pi/wiringpi/i2c-library/
 
 ****************************************************************************/
+#include <stdio.h>
+#include <errno.h>
+#include <stdint.h>
+#include <time.h>
+#include <math.h>
+#include <wiringPiI2C.h>
+
 #ifndef __BME280_H__
 #define __BME280_H__
 
-#define BME280_ADDRESS                0x76
 
 #define BME280_REGISTER_DIG_T1        0x88
 #define BME280_REGISTER_DIG_T2        0x8A
@@ -121,12 +127,13 @@ typedef struct
 } bme280_raw_data;
 
 
-void readCalibrationData(int fd, bme280_calib_data *cal);
-int32_t getTemperatureCalibration(bme280_calib_data *cal, int32_t adc_T);
-float compensateTemperature(int32_t t_fine);
-float compensatePressure(int32_t adc_P, bme280_calib_data *cal, int32_t t_fine);
-float compensateHumidity(int32_t adc_H, bme280_calib_data *cal, int32_t t_fine);
-void getRawData(int fd, bme280_raw_data *raw);
-float getAltitude(float pressure);
+void    bme280_standardSetup(int fd, bme280_calib_data *calibrationData);  
+void    bme280_readCalibrationData(int fd, bme280_calib_data *cal);
+int32_t bme280_getTemperatureCalibration(bme280_calib_data *cal, int32_t adc_T);
+float   bme280_compensateTemperature(int32_t t_fine);
+float   bme280_compensatePressure(int32_t adc_P, bme280_calib_data *cal, int32_t t_fine);
+float   bme280_compensateHumidity(int32_t adc_H, bme280_calib_data *cal, int32_t t_fine);
+void    bme280_getRawData(int fd, bme280_raw_data *raw);
+float   bme280_getAltitude(float pressure);
 
 #endif
