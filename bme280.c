@@ -81,8 +81,8 @@ int main() {
   float a = getAltitude(p);                         // meters
 
   printf("{\"sensor\":\"bme280\", \"humidity\":%.2f, \"pressure\":%.2f,"
-    " \"temperature\":%.2f, \"altitude\":%.2f, \"timestamp\":%d}\n",
-    h, p, t, a, (int)time(NULL));
+    " \"celsius\":%.2f, \"fahrenheit \":%.2f, \"altitude\":%.2f, \"timestamp\":%d}\n",
+    h, p, t, t*9/5 +32, a, (int)time(NULL));
 
   return 0;
 }
