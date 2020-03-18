@@ -16,21 +16,16 @@ bme280_calib_data cal;
 int bme280_address = 0x76;
 int bme280_fd; 
 
-void setup() {
-  bme280_standardSetup(bme280_fd, &cal);
-}
-
 
 int main() {
   bme280_raw_data raw;
 
-  bme280_fd = wiringPiI2CSetup(bme280_address);
+  bme280_fd = bme280_standardSetup(bme280_address, &cal);
   if(bme280_fd < 0) {
-    printf("Device not found");
+    fprintf(stderr, "device not found at address %02x\n",bme280_address);
     return -1;
   }
 
-  setup();
   
 
   bme280_getRawData(bme280_fd, &raw);

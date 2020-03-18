@@ -54,11 +54,17 @@ https://github.com/adafruit/Adafruit_BME280_Library/blob/master/Adafruit_BME280.
 
 #include "bme280rpi.h"
 
-void bme280_standardSetup(int fd, bme280_calib_data *calibrationData) {
+int bme280_standardSetup(int bme280_address, bme280_calib_data *calibrationData) {
+  int fd = wiringPiI2CSetup(bme280_address);
+  if(fd < 0) {
+    return -1;
+  }  
+
   bme280_readCalibrationData(fd, calibrationData);
 
   wiringPiI2CWriteReg8(fd, 0xf2, 0x01);   // humidity oversampling x 1
   wiringPiI2CWriteReg8(fd, 0xf4, 0x25);   // pressure and temperature oversampling x 1, mode normal
+  return fd;
 }
 
 int32_t bme280_getTemperatureCalibration(bme280_calib_data *cal, int32_t adc_T) {
