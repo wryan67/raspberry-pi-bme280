@@ -6,7 +6,7 @@
 
    Compile using:  
 
-   $ gcc demo.c -lwiringPi -lwiringPiBME280rpi -o demo
+   $ gcc demo.c -lwiringPi -lwiringPiBME280rpi -o bme280
 
 */
 #include <stdio.h>
