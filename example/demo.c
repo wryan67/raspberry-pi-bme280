@@ -12,21 +12,28 @@
 #include <stdio.h>
 #include <bme280rpi.h>
 
-int BME280_ADDRESS = 0x76;
+bme280_calib_data cal;
+int bme280_address = 0x76;
+int bme280_fd; 
+
+void setup() {
+  bme280_standardSetup(bme280_fd, &cal);
+}
+
 
 int main() {
+  bme280_raw_data raw;
 
-  int fd = wiringPiI2CSetup(BME280_ADDRESS);
-  if(fd < 0) {
+  bme280_fd = wiringPiI2CSetup(bme280_address);
+  if(bme280_fd < 0) {
     printf("Device not found");
     return -1;
   }
 
-  bme280_calib_data cal;
-  bme280_raw_data raw;
-  bme280_standardSetup(fd, &cal);
+  setup();
+  
 
-  bme280_getRawData(fd, &raw);
+  bme280_getRawData(bme280_fd, &raw);
   int32_t t_fine = bme280_getTemperatureCalibration(&cal, raw.temperature);
   float t = bme280_compensateTemperature(t_fine); // C
   float p = bme280_compensatePressure(raw.pressure, &cal, t_fine) / 100; // hPa
