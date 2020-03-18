@@ -26,10 +26,9 @@ int main() {
 
   bme280_calib_data cal;
   bme280_raw_data raw;
-
   bme280_standardSetup(fd, &cal);
-  bme280_getRawData(fd, &raw);
 
+  bme280_getRawData(fd, &raw);
   int32_t t_fine = bme280_getTemperatureCalibration(&cal, raw.temperature);
   float t = bme280_compensateTemperature(t_fine); // C
   float p = bme280_compensatePressure(raw.pressure, &cal, t_fine) / 100; // hPa
