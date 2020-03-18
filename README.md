@@ -25,6 +25,6 @@ sudo make install
 
 ## Demo
 ```
-./bme380
+$ ./bme380
 {"sensor":"bme280", "humidity":34.86, "pressure":1008.16, "celsius":24.25, "fahrenheit ":75.65, "altitude":40.37, "timestamp":1584501597}
 ```
