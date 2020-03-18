@@ -183,4 +183,3 @@ float bme280_getAltitude(float pressure) {
 
   return 44330.0 * (1.0 - pow(pressure / MEAN_SEA_LEVEL_PRESSURE, 0.190294957));
 }
-
