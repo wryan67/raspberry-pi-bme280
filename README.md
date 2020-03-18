@@ -9,12 +9,15 @@ Copyright (c) 2020 Wade Ryan
 
 ```
 git clone https://github.com/wryan67/bme280_rpi_lib.git
-
 ```
 
-## Dependencies
+## Requirements
+On your Raspberry Pi, please use the raspi-config program to enable the I2C interface.
+Then use the gpio command to make sure your i2c devices can be found.  The default address 
+for an BME280 chip is 0x76.  
 ```
-sudo apt-get install libi2c-dev i2c-tools wiringpi
+$ sudo raspi-config
+$ gpio i2cd
 ```
 
 ## Installation
