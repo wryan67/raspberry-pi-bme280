@@ -10,11 +10,9 @@
 
 */
 #include <stdio.h>
-
-#define BME280_ADDRESS                0x76
-
 #include <bme280rpi.h>
 
+int BME280_ADDRESS = 0x76;
 
 int main() {
 
