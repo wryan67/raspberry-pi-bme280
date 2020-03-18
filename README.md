@@ -1,5 +1,9 @@
+This library will retrieve temperature, humitidy, and pressure from a bme280 sensor.  
 
-This piece of code was forked from:  https://github.com/andreiva/raspberry-pi-bme280
+This library was forked from:  https://github.com/andreiva/raspberry-pi-bme280
+
+Copyright (c) 2020 Wade Ryan
+
 
 ## Download
 
