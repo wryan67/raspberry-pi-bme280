@@ -1,5 +1,9 @@
+This library will retrieve temperature, humitidy, and pressure from a bme280 sensor.  
 
-This piece of code was forked from:  https://github.com/andreiva/raspberry-pi-bme280
+This library was forked from:  https://github.com/andreiva/raspberry-pi-bme280
+
+Copyright (c) 2020 Wade Ryan
+
 
 ## Download
 
@@ -25,6 +29,6 @@ sudo make install
 
 ## Demo
 ```
-./bme380
+$ ./bme380
 {"sensor":"bme280", "humidity":34.86, "pressure":1008.16, "celsius":24.25, "fahrenheit ":75.65, "altitude":40.37, "timestamp":1584501597}
 ```
