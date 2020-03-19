@@ -62,8 +62,6 @@ int bme280_standardSetup(int bme280_address, bme280_calib_data *calibrationData)
 
   bme280_readCalibrationData(fd, calibrationData);
 
-  wiringPiI2CWriteReg8(fd, 0xf2, 0x01);   // humidity oversampling x 1
-  wiringPiI2CWriteReg8(fd, 0xf4, 0x25);   // pressure and temperature oversampling x 1, mode normal
   return fd;
 }
 
@@ -151,6 +149,9 @@ float bme280_compensateHumidity(int32_t adc_H, bme280_calib_data *cal, int32_t t
 }
 
 void bme280_getRawData(int fd, bme280_raw_data *raw) {
+  wiringPiI2CWriteReg8(fd, 0xf2, 0x01);   // humidity oversampling x 1
+  wiringPiI2CWriteReg8(fd, 0xf4, 0x25);   // pressure and temperature oversampling x 1, mode normal
+
   wiringPiI2CWrite(fd, 0xf7);
 
   raw->pmsb = wiringPiI2CRead(fd);
