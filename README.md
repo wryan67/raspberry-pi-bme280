@@ -29,6 +29,13 @@ $ cd src
 $ make && sudo make install
 ```
 
+## Prerequisites
+
+    cd ~/projects
+    sudo git clone git@github.com:wryan67/udd_rpi_lib.git
+    cd udd_rpi_lib
+    make install
+
 ## Compling
 ```
 Complie your applications using these command line arguments: -lwiringPi -lwiringBME280rpi
