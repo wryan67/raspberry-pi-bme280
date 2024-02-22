@@ -38,7 +38,7 @@ $ make && sudo make install
 
 ## Compling
 ```
-Complie your applications using these command line arguments: -lwiringPi -lwiringBME280rpi
+Complie your applications using these command line arguments: -lwiringPi -lwiringPiBME280rpi
 ```
 
 ## Demo
